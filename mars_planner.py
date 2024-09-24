@@ -57,27 +57,29 @@ class RoverState:
         return succ
 
 
-def pick_up_tool(state):
+def use_tool(state):
     r2 = deepcopy(state)
-    if state.loc == "station" and not state.holding_tool:
-        r2.holding_tool = True
+    if state.holding_tool and state.loc == "sample" and not state.sample_extracted:
+        r2.sample_extracted = True
     r2.prev = state
     return r2
 
 
-def drop_tool(state):
-    r2 = deepcopy(state)
-    if state.loc == "station" and state.holding_tool:
-        r2.holding_tool = False
-    r2.prev = state
-    return r2
-
-
-action_list.append(pick_up_tool)
-action_list.append(drop_tool)
+action_list.append(use_tool)
 
 
 if __name__ == "__main__":
     s = RoverState()
+    print("Initial State:", s)
+
+    # BFS
     result = breadth_first_search(s, action_list, mission_complete)
-    print(result)
+    print("BFS Search result:", result)
+
+    # DFS
+    result = depth_first_search(s, action_list, mission_complete)
+    print("DFS Search result:", result)
+
+    # Depth-Limited Search
+    result = depth_limited_search(s, action_list, mission_complete, limit=6)
+    print("DLS Search result:", result)
