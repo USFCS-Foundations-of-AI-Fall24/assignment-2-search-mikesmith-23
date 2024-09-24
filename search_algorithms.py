@@ -1,67 +1,63 @@
 from collections import deque
 
-
-
-## We will append tuples (state, "action") in the search queue
-def breadth_first_search(startState, action_list, goal_test, use_closed_list=True) :
+## Breadth-First Search with state counting
+def breadth_first_search(startState, action_list, goal_test, use_closed_list=True):
     search_queue = deque()
     closed_list = {}
+    state_counter = 0  # Initialize state counter
 
-    search_queue.append((startState,""))
-    if use_closed_list :
+    search_queue.append((startState, ""))
+    if use_closed_list:
         closed_list[startState] = True
-    while len(search_queue) > 0 :
-        ## this is a (state, "action") tuple
+
+    while len(search_queue) > 0:
         next_state = search_queue.popleft()
+        state_counter += 1  # Increment state counter
+
+        print(f"Dequeued state #{state_counter}: {next_state[0]}")
+
         if goal_test(next_state[0]):
-            print("Goal found")
-            print(next_state)
-            ptr = next_state[0]
-            while ptr is not None :
-                ptr = ptr.prev
-                print(ptr)
+            print(f"Goal found after generating {state_counter} states.")
             return next_state
-        else :
+        else:
             successors = next_state[0].successors(action_list)
-            if use_closed_list :
-                successors = [item for item in successors
-                                    if item[0] not in closed_list]
-                for s in successors :
+            if use_closed_list:
+                successors = [item for item in successors if item[0] not in closed_list]
+                for s in successors:
                     closed_list[s[0]] = True
+
             search_queue.extend(successors)
 
-### Note the similarity to BFS - the only difference is the search queue
+    print(f"Total number of states generated: {state_counter}")
+    return None
 
-## use the limit parameter to implement depth-limited search
-def depth_first_search(startState, action_list, goal_test, use_closed_list=True,limit=0) :
+## Depth-First Search with state counting
+def depth_first_search(startState, action_list, goal_test, use_closed_list=True):
     search_queue = deque()
     closed_list = {}
+    state_counter = 0  # Initialize state counter
 
-    search_queue.append((startState,""))
-    if use_closed_list :
+    search_queue.append((startState, ""))
+    if use_closed_list:
         closed_list[startState] = True
-    while len(search_queue) > 0 :
-        ## this is a (state, "action") tuple
-        next_state = search_queue.pop()
+
+    while len(search_queue) > 0:
+        next_state = search_queue.pop()  # DFS uses stack (LIFO)
+        state_counter += 1  # Increment state counter
+
+        print(f"Dequeued state #{state_counter}: {next_state[0]}")
+
         if goal_test(next_state[0]):
-            print("Goal found")
-            print(next_state)
-            ptr = next_state[0]
-            while ptr is not None :
-                ptr = ptr.prev
-                print(ptr)
+            print(f"Goal found after generating {state_counter} states.")
             return next_state
-        else :
+        else:
             successors = next_state[0].successors(action_list)
-            if use_closed_list :
-                successors = [item for item in successors
-                                    if item[0] not in closed_list]
-                for s in successors :
+            if use_closed_list:
+                successors = [item for item in successors if item[0] not in closed_list]
+                for s in successors:
                     closed_list[s[0]] = True
+
             search_queue.extend(successors)
 
-## add iterative deepening search here
-
-
-
-f
+    print(f"Total number of states generated: {state_counter}")
+    return None
